@@ -1,0 +1,26 @@
+---
+ - name: learning error handling
+   hosts: boss
+   tasks:
+    - name: installing httpd
+      yum: 
+       name: httpdd
+       state: installed
+      register: inst
+      ignore_errors: true
+    - debug:
+       msg: "httpd failed"
+      when: inst.failed == true
+    - name: httpd service restarting
+      service: 
+       name: httpdd
+       state: restarted
+       enabled: yes
+      register: serv
+      ignore_errors: true
+    - debug:
+       msg: "service failed"
+      when: serv.failed == true
+    - debug: 
+       msg: "boths httpd and service failed"
+      when: result.failed == true and serv.failed == true
